@@ -10,8 +10,8 @@ from time import time
 import data_plot
 import pdb 
 
-def loadData(fileName):
-    df=pd.read_csv(fileName)
+def loadData():
+    df=pd.read_csv('../Data/features_3_sec.csv')
     
     # fill NaN if any
     if df.isnull().values.any():
@@ -23,10 +23,18 @@ def loadData(fileName):
     df_x=df.drop(['filename','length','label'],axis=1)
     scaler=MinMaxScaler()
     X=scaler.fit_transform(df_x)
+    X_dim=X.shape
+    X=X.reshape((int(X_dim[0]/10), int(X_dim[1]*10)))
     
     df_y=df['label']
     y=df_y.to_numpy()
+    y=y[::10]
     
+    labels=np.unique(y)
+    for  i,l in enumerate(labels):
+        y[np.where(y==l)]=i
+    
+    y=y.astype(int)
     return X, y
 
 
